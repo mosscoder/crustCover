@@ -9,3 +9,6 @@ Description: Calculates NDVI
 License: What license is it under?
 LazyData: TRUE
 Depends: colorspace, devtools, IM, jpeg, raster, rgdal, rgeos
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
