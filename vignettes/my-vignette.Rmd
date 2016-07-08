@@ -7,7 +7,7 @@ output: html_document
 
 # Background
 
-This R package was developed as a tool to quantify biocrust development and cover from photo data. The methods are an adaptation of Fischer et al. (2012) in which a point and shoot camera and filter were used to determine NDVI of biocrusts. They callibrated the reflectance of the visible red (VIS) and near-infrared bands (NIR) from the images with a color checker of known reflectance values. From these corrected reflectance data they then calculated NDVI.  
+This R package was developed as a tool to quantify biocrust development and cover from photo data. The methods are an adaptation of Fischer et al. (2012) in which a point and shoot camera and filter were used to determine NDVI of biocrusts. They calibrated the reflectance of the visible red (VIS) and near-infrared bands (NIR) from the images with a color checker of known reflectance values. From these corrected reflectance data they then calculated NDVI.  
 
 ## Installation
 Users may download and install the crustCover package from a Github repository as demonstrated below:
@@ -20,7 +20,7 @@ if (!require("devtools"))
 install_github(repo = "mosscoder/crustCover")
 ```
 
-## Preparing Files and Establishing the Working Directory
+## Preparing the Working Directory
 
 The functions in the crustCover package expect the following folders and optional files in the working directory:
 
@@ -43,7 +43,7 @@ The crustCover functions expect that these photos are in sequence, i.e.:
 - **observation 2 VIS:** IMG_102.jpeg
 - **observation 2 NIR:** IMG_103.jpeg
 
-The functions can tolerate breaks in the sequence (jumping from 100 to 103, for example). The functions will ignore non-numeric characters in the filename, and sort only by numerals. 
+The functions can tolerate breaks in the sequence (jumping from 100 to 103, for example). The functions will ignore non-numeric characters in the file name, and sort only by numerals. 
 
 The crustCover functions will automatically name the output files observation_1, observation_2, observation_3, etc., but the user may optionally specify a list of names to label the function output files by adding a .csv titled **names.csv**. There should be one name per observation in the following format:
 
@@ -54,9 +54,9 @@ The crustCover functions will automatically name the output files observation_1,
 |pet name 3|
 
 
-## Establishing Color Checker Cells for Callibration 
+## Establishing Color Checker Cells for Calibration 
 
-To establish the positions of the color checker sequares, call the following function and store it as an object:
+To establish the positions of the color checker cells, call the following function and store it as an object:
 
 ```{r, eval=F}
 library(crustCover)
@@ -73,13 +73,13 @@ The chart() function will then display the chart positions as specified by the u
 
 ![](cell.positions.jpeg)
 
-## Establishing observation Area for Stats and Cover Calculations
+## Establishing Observation Area
 
 To establish the observation area, call the following function and store it as an object:
 ```{r, eval=F}
 pot <- pot()
 ```
-The function will load a template image, and the user must click 16 times around the perimeter of the observation to establish the observation area. Call the function again to correct errors.  
+The function will load a template image, and the user must click 16 times to circumscribe the observation area. Call the function again to correct errors.  
 
 ![](pot.area.jpeg)
 
@@ -88,13 +88,13 @@ The function will load a template image, and the user must click 16 times around
 The user may now batch process their images to determine NDVI and other metrics:
 
 ```{r, eval=F}
-ndvi(chart = chart, observation = observation)
+ndvi(chart = chart, pot = pot)
 ```
 
 An NDVI threshold establishes the cutoff point for distinguishing biocrust from other cover types. Fischer et al. found that moderately developed biocrust had median NDVI values ranging from 0.25 to 0.55 or more on sandy soils. By default the threshold is set at 0.3, but for darker substrates, or images with intense shadows, a higher threshold may be needed. Users may adjust the threshold value with the threshold argument as follows:
 
 ```{r, eval=F}
-ndvi(chart = chart, observation = observation, threshold = 0.75)
+ndvi(chart = chart, pot = pot, threshold = 0.75)
 ```
 
 We advise initially evaluating only one or two sets of images to estimate appropriate threshold values. 
@@ -102,7 +102,7 @@ We advise initially evaluating only one or two sets of images to estimate approp
 To minimize noise from shadows, a pixel neighborhood averaging calculation is applied by default. This default value can be adjusted with the agg.fact argument (default 10).
 
 ```{r, eval=F}
-ndvi(chart = chart, observation = observation, agg.fact = 1)
+ndvi(chart = chart, pot = pot, agg.fact = 1)
 ```
 
 Lower values will yield higher resolution data, but with greater likelihood of associated noise from shadows. Performance also suffers when set to a smaller neighborhood. 
