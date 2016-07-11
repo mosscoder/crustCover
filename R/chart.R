@@ -4,8 +4,12 @@ chart <- function(){
   vis.jpeg <- readJPEG(paste("./vis/",file,sep=""))
 
   vis.red <- raster(vis.jpeg[,,1])
+  vis.green <- raster(vis.jpeg[,,2])
+  vis.blue <- raster(vis.jpeg[,,3])
 
-  plot(vis.red, col=gray(1:100/100))
+  rgb <- stack(vis.red, vis.green, vis.blue)
+
+  plotRGB(rgb, scale=1)
 
   chart.coords <- data.frame(x=numeric(),
                              y=numeric())
