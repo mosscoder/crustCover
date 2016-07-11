@@ -18,7 +18,7 @@ ndvi <- function(chart, pot, threshold = 0.3, agg.fact=10){
   if(file.exists("names.csv")){
     names <- c(as.character(read.csv("names.csv")[,1]))
   }else{
-    names <- c(names = paste("pot_", 1:length(vis.files), sep=""))
+    names <- c(names = paste("obs.", 1:length(vis.files), sep=""))
   }
 
   data(chart.vals)
