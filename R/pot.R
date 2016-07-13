@@ -1,5 +1,7 @@
 pot <- function(){
-  vis.jpeg <- list.files(path="./vis")[1]
+  file() <- list.files(path="./vis")[1]
+
+  vis.jpeg <- readJPEG(paste("./vis/",file,sep=""))
 
   vis.red <- raster(vis.jpeg[,,1])
   vis.green <- raster(vis.jpeg[,,2])
