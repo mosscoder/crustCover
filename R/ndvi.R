@@ -28,41 +28,34 @@ ndvi <- function(chart, pot, threshold = 0.3, agg.fact=10){
     vis.jpeg <- readJPEG(paste("./vis/",vis.files[x],sep=""))
 
     vis.red <- raster(vis.jpeg[,,1])
-    vis.green <- raster(vis.jpeg[,,2])
-    vis.blue <- raster(vis.jpeg[,,3])
-
     vis.red.df <- as.data.frame(rasterToPoints(vis.red))[,3]
-    vis.green.df <- as.data.frame(rasterToPoints(vis.green))[,3]
-    vis.blue.df <- as.data.frame(rasterToPoints(vis.blue))[,3]
-
-    vis.rgb.df <- data.frame(vis.red.df,vis.green.df,vis.blue.df)
-
-    vis.color.obj <- colorspace::RGB(vis.rgb.df[,1],vis.rgb.df[,2],vis.rgb.df[,3])
-    vis.lab.unequal <- coords(as(vis.color.obj, "LAB"))
-    vis.lab.equal <- histeq((vis.lab.unequal[,1]/100)*256)
-
     vis.template <- rasterToPoints(vis.red)
 
-    vis.equal.ras <- rasterFromXYZ(as.matrix(data.frame(vis.template[,1:2],vis.lab.equal)))
-
-    vis.cal <- data.frame(val = numeric())
+    vis.cal.df <- data.frame(x=numeric(),
+                             y=numeric())
 
     for(i in 1:24){
       poly <- chart[i]
-      vis.cal[i,1] <- mean(unlist(extract(vis.equal.ras, poly)))/256
+      df <- data.frame(x = extract(vis.red, poly), y = chart.vals[i,2])
+      df.samp <- df[sample(x=1:nrow(df),size=10,replace=F),]
+      colnames(df.samp) <- c("x","y")
+      vis.cal.df <- rbind(vis.cal.df,df.samp )
     }
 
-    vis.cal.df <- data.frame(vis.cal, chart.vals[,2])
-    colnames(vis.cal.df) <- c("x","y")
     vis.cal.df <- vis.cal.df[order(vis.cal.df$x),]
 
-    vis.mod <- nls(y ~ I(a*exp(b*x)), data = vis.cal.df, start = list(a = 0.01, b = 1))
+    vis.svm_tune <- tune(svm, train.x=vis.cal.df$x, train.y=vis.cal.df$y,
+                         kernel="radial", ranges=list(cost=1:10, gamma=c(0.1,1,10,100,1000,10000)))
 
-    vis.predictions <- predict(vis.mod, list(x = vis.lab.equal/256))
+    vis.svm.model <- svm(y ~ x,
+                         data = vis.cal.df,
+                         cost = vis.svm_tune$best.parameters$cost,
+                         gamma = vis.svm_tune$best.parameters$gamma)
+   # plot(vis.cal.df)
+    #lines(vis.cal.df$x, predict(vis.svm.model, new.data = (list(x = vis.cal.df$x))), col = "green")
+    vis.predictions <- predict(vis.svm.model, data.frame(x = vis.red.df))
 
-    vis.color.lab.obj <- colorspace::LAB(vis.lab.unequal[,1], vis.lab.unequal[,2], vis.predictions*100)
-    vis.equal.rgb <- coords(as(vis.color.lab.obj, "RGB"))
-    vis.equal.r <- rasterFromXYZ(as.matrix(data.frame(vis.template[,1:2],vis.equal.rgb[,1])))
+    vis.cal.r <- rasterFromXYZ(as.matrix(data.frame(vis.template[,1:2],vis.predictions)))
 
     #### NIR ####
 
@@ -79,32 +72,39 @@ ndvi <- function(chart, pot, threshold = 0.3, agg.fact=10){
     nir.rgb.df <- data.frame(nir.red.df,nir.green.df,nir.blue.df)
 
     nir.color.obj <- colorspace::RGB(nir.rgb.df[,1],nir.rgb.df[,2],nir.rgb.df[,3])
-    nir.lab.unequal <- coords(as(nir.color.obj, "LAB"))
-    nir.lab.equal <- histeq((nir.lab.unequal[,1]/100)*256)
+    nir.lab <- coords(as(nir.color.obj, "LAB"))[,1]/100
 
     nir.template <- rasterToPoints(nir.red)
-    nir.equal.ras <- rasterFromXYZ(as.matrix(data.frame(nir.template[,1:2],nir.lab.equal)))
+    nir.refl.ras <- rasterFromXYZ(as.matrix(data.frame(nir.template[,1:2], nir.lab)))
 
-    nir.cal <- data.frame(val = numeric())
+    nir.cal.df <- data.frame(x=numeric(),
+                             y=numeric())
 
     for(i in 1:24){
       poly <- chart[i]
-      nir.cal[i,1] <- mean(unlist(extract(nir.equal.ras, poly)))/256
+      df <- data.frame(x = extract(nir.refl.ras, poly), y = chart.vals[i,2])
+      df.samp <- df[sample(x=1:nrow(df),size=10,replace=F),]
+      colnames(df.samp) <- c("x","y")
+      nir.cal.df <- rbind(nir.cal.df, df.samp )
     }
 
-    nir.cal.df <- data.frame(nir.cal, chart.vals[,3])
-    colnames(nir.cal.df) <- c("x","y")
     nir.cal.df <- nir.cal.df[order(nir.cal.df$x),]
 
-    nir.mod <- nls(y ~ I(a*exp(b*x)), data = nir.cal.df, start = list(a = 0.01, b = 1))
+    nir.svm_tune <- tune(svm, train.x=nir.cal.df$x, train.y=nir.cal.df$y,
+                         kernel="radial", ranges=list(cost=1:10, gamma=c(0.1,1,10,100,1000,10000)))
 
-    nir.predictions <- predict(nir.mod, list(x = nir.lab.equal/256))
+    nir.svm.model <- svm(y ~ x,
+                         data = nir.cal.df,
+                         cost = nir.svm_tune$best.parameters$cost,
+                         gamma = nir.svm_tune$best.parameters$gamma)
+    #plot(nir.cal.df)
+    #lines(nir.cal.df$x, predict(nir.svm.model, new.data = (list(x = nir.cal.df$x))), col = "green")
+    nir.predictions <- predict(nir.svm.model, data.frame(x = nir.lab))
 
-    nir.equal.refl <- rasterFromXYZ(as.matrix(data.frame(nir.template[,1:2],nir.predictions)))+(10/256)
+    nir.equal.refl <- rasterFromXYZ(as.matrix(data.frame(nir.template[,1:2], nir.predictions)))
 
     #### NDVI ####
-
-    ndvi <- aggregate((nir.equal.refl - vis.equal.r)/(nir.equal.refl + vis.equal.r), fact=agg)
+    ndvi <- aggregate((nir.equal.refl - vis.cal.r)/(nir.equal.refl + vis.cal.r), fact=agg)
     pot.ndvi <- mask(crop(ndvi, pot), pot)
     writeRaster(pot.ndvi, paste("./ndvi/", names[x], "_ndvi_ras.tif", sep = ""), format = "GTiff", overwrite = T)
     pot.cut <- pot.ndvi > t
@@ -114,7 +114,7 @@ ndvi <- function(chart, pot, threshold = 0.3, agg.fact=10){
     par(mfrow=c(3,1))
     plot(pot.ndvi, col=gray(1:100/100), main=paste(names[x],"NDVI Values"),axes=FALSE, box=FALSE)
     hist(pot.ndvi, breaks=1000, main="Distribution")
-    plot(pot.cut, col=c("black","green"), legend=F, main=paste("Binary Cover at",threshold),axes=FALSE, box=FALSE)
+    plot(pot.cut, col=c("black","green"), legend=F, main=paste("Binary Cover at", t),axes=FALSE, box=FALSE)
     dev.off()
 
     dat <- read.csv("ndvi.data.csv")
