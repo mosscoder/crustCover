@@ -1,5 +1,5 @@
 pot <- function(){
-  file() <- list.files(path="./vis")[1]
+  file <- list.files(path="./vis")[1]
 
   vis.jpeg <- readJPEG(paste("./vis/",file,sep=""))
 
