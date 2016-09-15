@@ -82,7 +82,7 @@ ndvi <- function(chart, pot, threshold = 0.3, agg.fact=10){
 
     for(i in 1:24){
       poly <- chart[i]
-      df <- data.frame(x = extract(nir.refl.ras, poly), y = chart.vals[i,2])
+      df <- data.frame(x = extract(nir.refl.ras, poly), y = chart.vals[i,3])
       df.samp <- df[sample(x=1:nrow(df),size=10,replace=F),]
       colnames(df.samp) <- c("x","y")
       nir.cal.df <- rbind(nir.cal.df, df.samp )
