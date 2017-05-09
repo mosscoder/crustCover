@@ -8,7 +8,6 @@ Maintainer: Kyle Doherty <kyledaviddoherty@gmail.com>
 Description: Calculates a number of spectral indices
 License: What license is it under?
 LazyData: TRUE
-Depends: devtools,randomForestSRC, jpeg, raster, rgdal, rgeos, RColorBrewer
-Suggests: knitr,
-    rmarkdown
+Depends: devtools, IM, jpeg, randomForestSRC, raster, RColorBrewer, rgdal, rgeos 
+Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

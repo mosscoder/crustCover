@@ -203,7 +203,7 @@ ccSpectral <- function(chart, obs.area, rasters = F, ml = F, ml.cutoff = 0.9, th
     msavi <- (2*nir.mat + 1 - sqrt((2*nir.mat + 1)^2 - 8*(nir.mat - red.mat)))/2
     evi <- 2.5*((nir.mat - red.mat)/(nir.mat + 6*red.mat - 7.5*blue.mat + 1))
     ci <- 1 - (red.mat - blue.mat)/(red.mat + blue.mat)
-    bsci <- (1 - 2*abs(red.mat - green.mat))/mean(stack(green.mat, red.mat, nir.mat))
+    bsci <- (1 - 2*abs(red.mat - green.mat))/raster::mean(stack(green.mat, red.mat, nir.mat))
     bi <- sqrt(green.mat^2 + red.mat^2 + nir.mat^2)
 
     #Apply Thresholds
