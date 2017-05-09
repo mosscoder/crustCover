@@ -1,14 +1,14 @@
 Package: crustCover
 Type: Package
 Title: Tools for quanitfying biocrust cover
-Version: 0.2
-Date: 2016-07-07
+Version: 0.3
+Date: 2017-05-09
 Author: Kyle Doherty
 Maintainer: Kyle Doherty <kyledaviddoherty@gmail.com>
-Description: Calculates NDVI
+Description: Calculates a number of spectral indices
 License: What license is it under?
 LazyData: TRUE
-Depends: colorspace, devtools, e1071, IM, jpeg, raster, rgdal, rgeos
+Depends: devtools,randomForestSRC, jpeg, raster, rgdal, rgeos, RColorBrewer
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
