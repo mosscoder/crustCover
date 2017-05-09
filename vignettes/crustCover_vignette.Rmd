@@ -75,13 +75,6 @@ if (!require("devtools"))
 install_github(repo = "mosscoder/crustCover")
 ```
 
-##Referring to the Manual
-Users may load the crustCover manual within R Studio at any time by calling ccManual():
-```{r, eval=F}
-library(crustCover)
-ccManual()
-```
-
 ## Preparing the Working Directory
 
 The functions in the crustCover package expect the following folders and optional file in the working directory:
