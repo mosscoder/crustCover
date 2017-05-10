@@ -2,6 +2,7 @@
 title: "crustCover Vignette"
 author: "Kyle Doherty"
 date: "May 9, 2017"
+output: html_document
 ---
 
 # Background
