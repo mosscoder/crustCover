@@ -278,7 +278,7 @@ While NDVI is often thought of as greenness, hues commonly perceived as green ma
 ![](ndvi_chart.jpg)
 In the above image, note that cell 4 (top row, third from the right), cell 11 (second row, second from the right), and cell 14 (third row, second from the left) all correspond to green hues. Cells 4 and 11 have NDVI values 0.24 and 0.20, while cell 14 has a value of 0.63. Cell 4 and 11 hues we might associate with healthy tissues of certain biocrust moss species, such as <i>Syntrichia caninervis</i> or <i>Bryum argenteum</i>. Thus, estimated NDVI values of moss tissues may not differ greatly from that of background soil, or may be less than that of background soil.
 
-##NDVI and Shadows
+## NDVI and Shadows  
 NDVI values are unstable in scenes containing shadows or uneven lighting gradients. Observe the following figure of NDVI space:
 ![](how_does_ndvi_work.png)
 NDVI is high when NIR reflectance values are high and VIS values are low. However, when both NIR and VIS reflectances are low, small relative differences in either band can lead to drastic differences in NDVI. This region of NDVI space (low NIR and low VIS reflectance, lower left in the above figure) corresponds to shaded and dark images within a scene. Thus, practitioners must take great care to ensure even lighting conditions within their images to achieve reliable NDVI estimates. Additionally, dark substrates, or even dark cyanobacteria and lichen crusts, may have low reflectances in NIR and VIS bands, and practitioners should exercise caution when interpreting image processing outputs from these cover types. 
